@@ -56,7 +56,7 @@ class ContextTracer(base.Tracer):
         while self._spans_list:
             self.end_span()
 
-    def span(self, name='span'):
+    def span(self, name='span',timestamps=None):
         """Create a new span with the trace using the context information.
 
         :type name: str
@@ -65,10 +65,13 @@ class ContextTracer(base.Tracer):
         :rtype: :class:`~opencensus.trace.span.Span`
         :returns: The Span object.
         """
-        span = self.start_span(name=name)
+        if timestamps is None:
+            span = self.start_span(name=name)
+        else:
+            span = self.start_span(name=name,timestamps=timestamps)
         return span
 
-    def start_span(self, name='span'):
+    def start_span(self, name='span',timestamps=None):
         """Start a span.
 
         :type name: str
@@ -85,10 +88,17 @@ class ContextTracer(base.Tracer):
             parent_span = base.NullContextManager(
                 span_id=self.span_context.span_id)
 
-        span = trace_span.Span(
-            name,
-            parent_span=parent_span,
-            context_tracer=self)
+        if timestamps is None:
+            span = trace_span.Span(
+                name,
+                parent_span=parent_span,
+                context_tracer=self)
+        else:
+            span = trace_span.Span(
+                name,
+                parent_span=parent_span,
+                context_tracer=self,
+                timestamps = timestamps)
         with self._spans_list_condition:
             self._spans_list.append(span)
         self.span_context.span_id = span.span_id
