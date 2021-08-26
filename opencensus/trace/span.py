@@ -113,11 +113,16 @@ class Span(base_span.BaseSpan):
             status=None,
             same_process_as_parent_span=None,
             context_tracer=None,
+            timestamps=None,
             span_kind=SpanKind.UNSPECIFIED):
         self.name = name
         self.parent_span = parent_span
-        self.start_time = start_time
-        self.end_time = end_time
+        if timestamps is not None:
+            self.start_time = timestamps[0]
+            self.end_time = timestamps[1]
+        else:
+            self.start_time = start_time
+            self.end_time = end_time
 
         if span_id is None:
             span_id = generate_span_id()
@@ -225,11 +230,18 @@ class Span(base_span.BaseSpan):
 
     def start(self):
         """Set the start time for a span."""
-        self.start_time = utils.to_iso_str()
+        # print('start:{}'.format(self.start_time))
+        if self.start_time is None:
+            self.start_time = utils.to_iso_str()
+        else:
+            pass
 
     def finish(self):
         """Set the end time for a span."""
-        self.end_time = utils.to_iso_str()
+        if self.end_time is None:
+            self.end_time = utils.to_iso_str()
+        else:
+            pass
 
     def __iter__(self):
         """Iterate through the span tree."""
