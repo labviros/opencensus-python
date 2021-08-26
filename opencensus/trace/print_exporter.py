@@ -39,7 +39,7 @@ class PrintExporter(base_exporter.Exporter):
         :param list of opencensus.trace.span_data.SpanData span_datas:
             SpanData tuples to emit
         """
-        print(span_datas)
+        
 
     def export(self, span_datas):
         """
